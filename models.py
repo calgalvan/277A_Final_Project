@@ -40,8 +40,8 @@ def parent_get_entropy(trueLabels, pred_label_probabilities, num_components):
         target_probabilities = np.array(target_probabilities) # convert list to numpy array for calculation
         cluster_probabilities = target_probabilities / target_probabilities.sum()
 
-        cluster_entropy = -np.sum(cluster_probabilities * np.log2(cluster_probabilities))
-        cluster_entropies[col] = cluster_entropy
+        cluster_entropy = float(-np.sum(cluster_probabilities * np.log2(cluster_probabilities)))
+        cluster_entropies[col] = f'{cluster_entropy:.2f}'
         
     return cluster_entropies
 
