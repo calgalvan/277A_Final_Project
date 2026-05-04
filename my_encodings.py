@@ -1,5 +1,6 @@
 from sklearn.preprocessing import OrdinalEncoder, OneHotEncoder
 import pandas as pd
+import numpy as np
 
 def dummy_encode(data: pd.DataFrame, categories):    
 
