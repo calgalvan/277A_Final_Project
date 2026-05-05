@@ -46,6 +46,10 @@ def parent_get_entropy(trueLabels, pred_label_probabilities, num_components):
     return cluster_entropies
 
 def TSNE_visualization(x_data, trueLabels, predLabels):
+    le = LabelEncoder()
+    trueLabels_enc = le.fit_transform(trueLabels)
+    predLabels_enc = le.fit_transform(predLabels)
+
     # plot to visualize accuracy
     T = TSNE(learning_rate='auto', init='random', perplexity=30, random_state=42)
     X_TSNE = T.fit_transform(x_data) # get points
@@ -54,13 +58,13 @@ def TSNE_visualization(x_data, trueLabels, predLabels):
     fig, ax = plt.subplots(1, 2, figsize=(10, 4))
 
     # true labels
-    ax[0].scatter(X_TSNE[:, 0], X_TSNE[:, 1], c=trueLabels, cmap='cividis')
+    ax[0].scatter(X_TSNE[:, 0], X_TSNE[:, 1], c=trueLabels_enc, cmap='cividis')
     ax[0].set_xlabel('TSNE component 1')
     ax[0].set_ylabel('TSNE component 2')
     ax[0].set_title('True Clustering')
 
     # predicted labels
-    ax[1].scatter(X_TSNE[:, 0], X_TSNE[:, 1], c=predLabels, cmap='inferno')
+    ax[1].scatter(X_TSNE[:, 0], X_TSNE[:, 1], c=predLabels_enc, cmap='inferno')
     ax[1].set_xlabel('TSNE component 1')
     ax[1].set_title('Predicted Clustering')
 
@@ -80,10 +84,12 @@ class MN_Logistic_Regression_model:
         my_model.fit(x_train, y_train)
 
         # define class vars for funcs
+        self.y_train = np.ravel(y_train)
+        self.y_test = np.ravel(y_test)
         self.x_train = x_train
-        self.y_train = y_train
+        # self.y_train = y_train
         self.x_test = x_test
-        self.y_test = y_test
+        # self.y_test = y_test
         self.num_classes = num_classes
 
         # training predictions
@@ -149,10 +155,13 @@ class Naive_Bayes_model:
         my_model.fit(x_train, y_train)
 
         # define class vars for funcs
+        # define class vars for funcs
+        self.y_train = np.ravel(y_train)
+        self.y_test = np.ravel(y_test)
         self.x_train = x_train
-        self.y_train = y_train
+        # self.y_train = y_train
         self.x_test = x_test
-        self.y_test = y_test
+        # self.y_test = y_test
         self.num_classes = num_classes
 
         # training predictions
