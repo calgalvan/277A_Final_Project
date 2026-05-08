@@ -46,9 +46,10 @@ def parent_get_entropy(trueLabels, pred_label_probabilities, num_components):
     return cluster_entropies
 
 def TSNE_visualization(x_data, trueLabels, predLabels):
-    le = LabelEncoder()
-    trueLabels_enc = le.fit_transform(trueLabels)
-    predLabels_enc = le.fit_transform(predLabels)
+    le1 = LabelEncoder()
+    le2 = LabelEncoder()
+    trueLabels_enc = le1.fit_transform(trueLabels)
+    predLabels_enc = le2.fit_transform(predLabels)
 
     # plot to visualize accuracy
     T = TSNE(learning_rate='auto', init='random', perplexity=30, random_state=42)
