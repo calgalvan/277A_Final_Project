@@ -217,7 +217,9 @@ class Naive_Bayes_model:
         self.num_classes = num_classes
     
         if update_priors == True:
-            my_model = GaussianNB(priors=[0.2, 0.2, 0.2, 0.2, 0.2])
+            p = 1 / num_classes
+            priors_list = [p] * num_classes
+            my_model = GaussianNB(priors=priors_list)
         
         else: 
             my_model = GaussianNB()
