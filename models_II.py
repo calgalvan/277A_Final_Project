@@ -25,10 +25,6 @@ import igraph as ig
 import umap.umap_ as umap
 
 # -------------------------- Cluster qualification methods ------------------------
-def parent_get_entropy():
-    # !! TO DO !!
-    return
-
 def TSNE_visualization(x_data, trueLabels, predLabels):
     le1 = LabelEncoder()
     le2 = LabelEncoder()
@@ -93,7 +89,8 @@ class MN_Logistic_Regression_model:
         train_acc = accuracy_score(self.y_train, self.y_train_predLabels) * 100
         print(f"training accuracy: {train_acc:.2f}%")
         print(f"testing accuracy: {test_acc:.2f}%")
-        return
+
+        return 
 
     def visualize_clustering(self):
         return TSNE_visualization(self.x_test, self.y_test, self.y_test_predLabels)
@@ -333,7 +330,6 @@ class Naive_Bayes_model:
 
         #Determine average entropy and normalize for comparison to other models
         return np.mean(entropy) / np.log(n_classes)
-
 
 
     def plot_entropy(self):
