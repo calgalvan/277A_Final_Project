@@ -53,6 +53,34 @@ def TSNE_visualization(x_data, trueLabels, predLabels):
 
     return
 
+def plot_entropy(self):
+
+        N, Nclass = self.y_test_probabilities.shape
+        class_labels = np.unique(self.y_test)
+
+        fig, ax = plt.subplots(Nclass, 1, sharex = True)
+        fig.set_figheight(Nclass + 1)
+        fig.subplots_adjust(hspace = 1)
+        fig.suptitle('Cross Entropy Plot for Naive Bayes')
+        fig.tight_layout(rect=[0, 0, 1, 1])
+
+        for i, l in enumerate(class_labels):
+            idx      = np.array([j for j, t in enumerate(self.y_test) if t == l])
+            pclass   = self.y_test_probabilities[idx,i]
+
+            #Count number of each label and calculate weight
+            (value, where) = np.histogram(pclass,\
+                                        bins = np.arange(0,1,0.01),\
+                                        density = True)
+            w = 0.5*(where[1:] + where[:-1])
+
+            ax[i].plot(w, value, 'k-')
+            ax[i].set_ylabel('frequency')
+            ax[i].set_title(class_labels[i])
+
+        ax[Nclass-1].set_xlabel('probability')
+        plt.show()
+
 # ---------------------------------- REGRESSION  ----------------------------------
 class MN_Logistic_Regression_model:
     def __init__(self,
