@@ -52,11 +52,23 @@ def TSNE_visualization(x_data, trueLabels, predLabels):
     plt.show()
 
     return
+def get_entropy(y_test_probabilities):
+    #Obtain the number of classes for normalization
+    n_classes = y_test_probabilities.shape[1]
 
-def plot_entropy(self):
+    #Ensure that 0 log2 0 = 0 instead of -inf
+    adjustedProbs = np.clip(y_test_probabilities, 1e-12, 1)
 
-        N, Nclass = self.y_test_probabilities.shape
-        class_labels = np.unique(self.y_test)
+    #Calculate Shannon's entropy based on equation for each data point and clusters
+    entropy = -np.sum(adjustedProbs * np.log(adjustedProbs), axis = 1)
+
+    #Determine average entropy and normalize for comparison to other models
+    return np.mean(entropy) / np.log(n_classes)
+    
+def plot_entropy(y_test_probabilities, y_test):
+
+        N, Nclass = y_test_probabilities.shape
+        class_labels = np.unique(y_test)
 
         fig, ax = plt.subplots(Nclass, 1, sharex = True)
         fig.set_figheight(Nclass + 1)
@@ -65,8 +77,8 @@ def plot_entropy(self):
         fig.tight_layout(rect=[0, 0, 1, 1])
 
         for i, l in enumerate(class_labels):
-            idx      = np.array([j for j, t in enumerate(self.y_test) if t == l])
-            pclass   = self.y_test_probabilities[idx,i]
+            idx      = np.array([j for j, t in enumerate(y_test) if t == l])
+            pclass   = y_test_probabilities[idx,i]
 
             #Count number of each label and calculate weight
             (value, where) = np.histogram(pclass,\
@@ -124,42 +136,10 @@ class MN_Logistic_Regression_model:
         return TSNE_visualization(self.x_test, self.y_test, self.y_test_predLabels)
 
     def get_entropy(self):
-        #Obtain the number of classes for normalization
-        n_classes = self.pred_label_probabilities.shape[1]
-
-        #Ensure that 0 log2 0 = 0 instead of -inf
-        adjustedProbs = np.clip(self.pred_label_probabilities, 1e-12, 1)
-
-        #Calculate Shannon's entropy based on equation for each data point and clusters
-        entropy = -np.sum(adjustedProbs * np.log(adjustedProbs), axis = 1)
-
-        #Determine average entropy and normalize for comparison to other models
-        return np.mean(entropy) / np.log(n_classes)
+        return get_entropy(self.y_test_probabilities)
 
     def plot_entropy(self):
-        N, Nclass = self.y_test_probabilities.shape
-        class_labels = np.unique(self.y_test)
-
-        fig, ax = plt.subplots(Nclass, 1, sharex = True)
-        fig.set_figheight(Nclass + 1)
-        fig.subplots_adjust(hspace = 1)
-        fig.suptitle('Cross Entropy Plot for Multinomial Logistic Regression')
-        fig.tight_layout(rect=[0, 0, 1, 1])
-
-        for i, l in enumerate(class_labels):
-            idx      = np.array([j for j, t in enumerate(self.y_test) if t == l])
-            pclass   = self.y_test_probabilities[idx,i]
-
-            #Count number of each label and calculate weight
-            (value, where) = np.histogram(pclass, bins = np.arange(0, 1, 0.01), density = True)
-            w = 0.5*(where[1:] + where[:-1])
-
-            ax[i].plot(w, value, 'k-')
-            ax[i].set_ylabel('Frequency')
-            ax[i].set_title(l)
-
-        ax[Nclass - 1].set_xlabel('Probability')
-        plt.show()
+        plot_entropy(self.y_test_probabilities, self.y_test)
 
 
 # ------------------------------ UNSUPERVISED MODELS ------------------------------
@@ -290,17 +270,7 @@ class Gaussian_Mixture_model:
         return TSNE_visualization(self.x_data, self.trueLabels, self.predLabels)
 
     def get_entropy(self):
-        #Obtain the number of classes for normalization
-        n_classes = self.pred_label_probabilities.shape[1]
-
-        #Ensure that 0 log2 0 = 0 instead of -inf
-        adjustedProbs = np.clip(self.pred_label_probabilities, 1e-12, 1)
-
-        #Calculate Shannon's entropy based on equation for each data point and clusters
-        entropy = -np.sum(adjustedProbs * np.log(adjustedProbs), axis = 1)
-
-        #Determine average entropy and normalize for comparison to other models
-        return np.mean(entropy) / np.log(n_classes)
+        return get_entropy(self.y_test_probabilities)
 
 
 # ------------------------------ SUPERVISED MODELS ------------------------------
@@ -347,43 +317,7 @@ class Naive_Bayes_model:
         return TSNE_visualization(self.x_test, self.y_test, self.y_test_predLabels)
 
     def get_entropy(self):
-        #Obtain the number of classes for normalization
-        n_classes = self.y_test_probabilities.shape[1]
-
-        #Ensure that 0 log2 0 = 0 instead of -inf
-        adjustedProbs = np.clip(self.y_test_probabilities, 1e-12, 1)
-
-        #Calculate Shannon's entropy based on equation for each data point and clusters
-        entropy = -np.sum(adjustedProbs * np.log(adjustedProbs), axis = 1)
-
-        #Determine average entropy and normalize for comparison to other models
-        return np.mean(entropy) / np.log(n_classes)
-
+        return get_entropy(self.y_test_probabilities)
 
     def plot_entropy(self):
-
-        N, Nclass = self.y_test_probabilities.shape
-        class_labels = np.unique(self.y_test)
-
-        fig, ax = plt.subplots(Nclass, 1, sharex = True)
-        fig.set_figheight(Nclass + 1)
-        fig.subplots_adjust(hspace = 1)
-        fig.suptitle('Cross Entropy Plot for Naive Bayes')
-        fig.tight_layout(rect=[0, 0, 1, 1])
-
-        for i, l in enumerate(class_labels):
-            idx      = np.array([j for j, t in enumerate(self.y_test) if t == l])
-            pclass   = self.y_test_probabilities[idx,i]
-
-            #Count number of each label and calculate weight
-            (value, where) = np.histogram(pclass,\
-                                        bins = np.arange(0,1,0.01),\
-                                        density = True)
-            w = 0.5*(where[1:] + where[:-1])
-
-            ax[i].plot(w, value, 'k-')
-            ax[i].set_ylabel('frequency')
-            ax[i].set_title(class_labels[i])
-
-        ax[Nclass-1].set_xlabel('probability')
-        plt.show()
+        plot_entropy(self.y_test_probabilities, self.y_test)
